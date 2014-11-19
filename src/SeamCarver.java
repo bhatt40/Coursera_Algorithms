@@ -8,14 +8,9 @@ public class SeamCarver {
     private byte[][][] pictureArray;
     private double[][] energyArray;
 
-    private double[][] shortestDistances;
-    private int[][] shortestPaths;
-
     private int width, height;
     private int arrayWidth, arrayHeight;
     private int N;
-
-    private boolean transposed;
 
     // create a seam carver object based on the given picture
     public SeamCarver(Picture picture) {
@@ -46,13 +41,6 @@ public class SeamCarver {
                 energyArray[j][i] = energy(i, j);
             }
         }
-
-        shortestDistances = new double[N][N];
-        shortestPaths = new int[N][N];
-
-        this.transposed = false;
-
-        this.updatePathsAndDistances();
     }
 
     // current picture
@@ -151,8 +139,6 @@ public class SeamCarver {
 
         this.width--;
         this.arrayWidth--;
-
-        this.updatePathsAndDistances();
     }
 
     private int getEnergySquared(byte[] a, byte[] b) {
@@ -162,57 +148,6 @@ public class SeamCarver {
         int bDelta = Math.abs((a[2] & 0xFF) - (b[2] & 0xFF));
 
         return rDelta * rDelta + gDelta * gDelta + bDelta * bDelta;
-    }
-
-    private int shortestPath(int x, int y) {
-
-        double shortestDistance = Double.MAX_VALUE;
-        int shortestDistanceIndex = -1;
-
-        for (int i = x-1; i <= x+1; i++) {
-            if (i >= 0 & i < arrayWidth) {
-                if (shortestDistances[y-1][i] < shortestDistance) {
-                    shortestDistance = shortestDistances[y-1][i];
-                    shortestDistanceIndex = i;
-                }
-            }
-        }
-
-        return shortestDistanceIndex;
-    }
-
-    private void updatePathsAndDistances() {
-
-        // Traverse from top to bottom of image
-        for (int j = 0; j < arrayHeight; j++) {
-            // Traverse from left to right of row
-            for (int i = 0; i < arrayWidth; i++) {
-                // Special case for first row
-                if (j == 0) {
-                    shortestDistances[j][i] = energy(i, j);
-                } else {
-                    // Update shortest path to this point
-                    int shortestDistanceIndex = shortestPath(i, j);
-                    shortestDistances[j][i] = shortestDistances[j - 1][shortestDistanceIndex] + energy(i, j);
-                    shortestPaths[j][i] = shortestDistanceIndex;
-                }
-            }
-        }
-    }
-
-    private int shortestDistance() {
-
-        double shortestDistance = Double.MAX_VALUE;
-        int shortestDistanceIndex = -1;
-
-        for (int i = 0; i < arrayWidth; i++) {
-            if (shortestDistances[arrayHeight - 1][i] < shortestDistance) {
-                shortestDistance = shortestDistances[arrayHeight - 1][i];
-                shortestDistanceIndex = i;
-            }
-        }
-
-        return shortestDistanceIndex;
     }
 
     private void transpose() {
@@ -226,33 +161,59 @@ public class SeamCarver {
                 double tempDouble = energyArray[i][j];
                 energyArray[i][j] = energyArray[j][i];
                 energyArray[j][i] = tempDouble;
-
-                tempDouble = shortestDistances[i][j];
-                shortestDistances[i][j] = shortestDistances[j][i];
-                shortestDistances[j][i] = tempDouble;
-
-                int tempInt = shortestPaths[i][j];
-                shortestPaths[i][j] = shortestPaths[j][i];
-                shortestPaths[j][i] = tempInt;
             }
         }
 
-        transposed = !transposed;
         int temp = this.arrayHeight;
         this.arrayHeight = this.arrayWidth;
         this.arrayWidth = temp;
 
-        this.updatePathsAndDistances();
     }
 
     private int[] findSeam() {
 
+        double[][] shortestDistances = new double[arrayHeight][arrayWidth];
+        int[][] shortestPaths = new int[arrayHeight][arrayWidth];
 
+        // Traverse from top to bottom of image
+        for (int j = 0; j < arrayHeight; j++) {
+            // Traverse from left to right of row
+            for (int i = 0; i < arrayWidth; i++) {
+                // Special case for first row
+                if (j == 0) {
+                    shortestDistances[j][i] = energy(i, j);
+                } else {
+                    // Update shortest path to this point
+                    double shortestDistance = Double.MAX_VALUE;
+                    int shortestDistanceIndex = -1;
+
+                    for (int a = i-1; a <= i+1; a++) {
+                        if (a >= 0 & a < arrayWidth) {
+                            if (shortestDistances[j-1][a] < shortestDistance) {
+                                shortestDistance = shortestDistances[j-1][a];
+                                shortestDistanceIndex = a;
+                            }
+                        }
+                    }
+
+                    shortestDistances[j][i] = shortestDistances[j - 1][shortestDistanceIndex] + energy(i, j);
+                    shortestPaths[j][i] = shortestDistanceIndex;
+                }
+            }
+        }
 
         int[] seam = new int[this.arrayHeight];
         int counter = this.arrayHeight - 1;
 
-        int nextIndex = this.shortestDistance();
+        double shortestDistance = Double.MAX_VALUE;
+        int nextIndex = -1;
+
+        for (int i = 0; i < arrayWidth; i++) {
+            if (shortestDistances[arrayHeight - 1][i] < shortestDistance) {
+                shortestDistance = shortestDistances[arrayHeight - 1][i];
+                nextIndex = i;
+            }
+        }
 
         do {
             seam[counter] = nextIndex;
