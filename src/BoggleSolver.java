@@ -50,7 +50,11 @@ public class BoggleSolver {
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word) {
 
-        return WORD_SCORES[Math.min(word.length(), 8)];
+        if (dictionary.contains(word)) {
+            return WORD_SCORES[Math.min(word.length(), 8)];
+        }
+
+        return 0;
     }
 
     private void getValidWords(BoggleBoard board, Boolean[][] visited, int row, int column, StringBuilder word) {
@@ -65,7 +69,7 @@ public class BoggleSolver {
         if (row != 0) {
             if (!visited[row - 1][column]) {
                 addLetter(board, word, row - 1, column);
-                if (prefix(word)) {
+                if (dictionary.hasKeysWithPrefix(word.toString())) {
                     getValidWords(board, visited, row - 1, column, word);
                 }
                 removeLetter(word);
@@ -76,7 +80,7 @@ public class BoggleSolver {
         if (row != board.rows() - 1) {
             if (!visited[row + 1][column]) {
                 addLetter(board, word, row + 1, column);
-                if (prefix(word)) {
+                if (dictionary.hasKeysWithPrefix(word.toString())) {
                     getValidWords(board, visited, row + 1, column, word);
                 }
                 removeLetter(word);
@@ -87,7 +91,7 @@ public class BoggleSolver {
         if (column != 0) {
             if (!visited[row][column - 1]) {
                 addLetter(board, word, row, column - 1);
-                if (prefix(word)) {
+                if (dictionary.hasKeysWithPrefix(word.toString())) {
                     getValidWords(board, visited, row, column - 1, word);
                 }
                 removeLetter(word);
@@ -98,7 +102,7 @@ public class BoggleSolver {
         if (column != board.cols() - 1) {
             if (!visited[row][column + 1]) {
                 addLetter(board, word, row, column + 1);
-                if (prefix(word)) {
+                if (dictionary.hasKeysWithPrefix(word.toString())) {
                     getValidWords(board, visited, row, column + 1, word);
                 }
                 removeLetter(word);
@@ -109,7 +113,7 @@ public class BoggleSolver {
         if (row != 0 & column != 0) {
             if (!visited[row - 1][column - 1]) {
                 addLetter(board, word, row - 1, column - 1);
-                if (prefix(word)) {
+                if (dictionary.hasKeysWithPrefix(word.toString())) {
                     getValidWords(board, visited, row - 1, column - 1, word);
                 }
                 removeLetter(word);
@@ -120,7 +124,7 @@ public class BoggleSolver {
         if (row != 0 & column != board.cols() - 1) {
             if (!visited[row - 1][column + 1]) {
                 addLetter(board, word, row - 1, column + 1);
-                if (prefix(word)) {
+                if (dictionary.hasKeysWithPrefix(word.toString())) {
                     getValidWords(board, visited, row - 1, column + 1, word);
                 }
                 removeLetter(word);
@@ -131,7 +135,7 @@ public class BoggleSolver {
         if (row != board.rows() - 1 & column != 0) {
             if (!visited[row + 1][column - 1]) {
                 addLetter(board, word, row + 1, column - 1);
-                if (prefix(word)) {
+                if (dictionary.hasKeysWithPrefix(word.toString())) {
                     getValidWords(board, visited, row + 1, column - 1, word);
                 }
                 removeLetter(word);
@@ -142,7 +146,7 @@ public class BoggleSolver {
         if (row != board.rows() - 1 & column != board.cols() - 1) {
             if (!visited[row + 1][column + 1]) {
                 addLetter(board, word, row + 1, column + 1);
-                if (prefix(word)) {
+                if (dictionary.hasKeysWithPrefix(word.toString())) {
                     getValidWords(board, visited, row + 1, column + 1, word);
                 }
                 removeLetter(word);
@@ -181,12 +185,6 @@ public class BoggleSolver {
         }
 
         return false;
-    }
-
-    private Boolean prefix(StringBuilder word) {
-
-        Iterable<String> dictionaryWithPrefix = dictionary.keysWithPrefix(word.toString());
-        return dictionaryWithPrefix.iterator().hasNext();
     }
 
     public static void main(String[] args)

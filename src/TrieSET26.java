@@ -132,6 +132,12 @@ public class TrieSET26 implements Iterable<String> {
         return results;
     }
 
+    /**
+     * Returns all of the keys in the set that start with <tt>prefix</tt>.
+     * @param prefix the prefix
+     * @return all of the keys in the set that start with <tt>prefix</tt>,
+     *     as an iterable
+     */
     private void collect(Node x, StringBuilder prefix, Queue<String> results) {
         if (x == null) return;
         if (x.isString) results.enqueue(prefix.toString());
@@ -140,6 +146,21 @@ public class TrieSET26 implements Iterable<String> {
             collect(x.next[c], prefix, results);
             prefix.deleteCharAt(prefix.length() - 1);
         }
+    }
+
+    public Boolean hasKeysWithPrefix(String prefix) {
+        Node x = get(root, prefix, 0);
+        if (x == null)
+            return false;
+        if (x.isString)
+            return true;
+        for (int i = 0; i < R; i++) {
+            if (x.next[i] != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -231,7 +252,6 @@ public class TrieSET26 implements Iterable<String> {
                 return x;
         return null;
     }
-
 
     /**
      * Unit tests the <tt>TrieSET</tt> data type.
