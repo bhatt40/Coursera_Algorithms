@@ -23,17 +23,17 @@ public class BurrowsWheeler {
             charArray[i] = s.charAt(index - 1);
         }
 
-        BinaryStdOut.write(Integer.toString(first));
+        BinaryStdOut.write(first);
         BinaryStdOut.write(String.valueOf(charArray));
+        BinaryStdOut.flush();
+        BinaryStdOut.close();
     }
 
     // apply Burrows-Wheeler decoding, reading from standard input and writing to standard output
     public static void decode() {
 
-        String inputString = BinaryStdIn.readString();
-        int first = Integer.decode(String.valueOf(inputString.charAt(0)));
-        String lastChars = inputString.substring(1);
-
+        int first = BinaryStdIn.readInt();
+        String lastChars = BinaryStdIn.readString();
         char[] firstChars = lastChars.toCharArray();
         Arrays.sort(firstChars);
 
@@ -58,9 +58,12 @@ public class BurrowsWheeler {
         do {
             decoded[decodedIndex++] = firstChars[nextIndex];
             nextIndex = next[nextIndex];
-        } while (nextIndex != first);
+        } while (decodedIndex < firstChars.length);
 
         BinaryStdOut.write(String.valueOf(decoded));
+
+        BinaryStdOut.flush();
+        BinaryStdOut.close();
     }
 
     private static int findNext(char letter, boolean[] marked, String lastChars) {
@@ -87,8 +90,5 @@ public class BurrowsWheeler {
             default:
                 throw new IllegalArgumentException();
         }
-
-        BinaryStdOut.flush();
-        BinaryStdOut.close();
     }
 }
