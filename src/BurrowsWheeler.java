@@ -35,7 +35,7 @@ public class BurrowsWheeler {
         int first = BinaryStdIn.readInt();
         String lastChars = BinaryStdIn.readString();
         char[] firstChars = lastChars.toCharArray();
-        Arrays.sort(firstChars);
+        charSort(firstChars);
 
         int[] next = new int[firstChars.length];
         boolean[] marked = new boolean[firstChars.length];
@@ -74,6 +74,23 @@ public class BurrowsWheeler {
         }
 
         throw new IllegalArgumentException();
+    }
+
+    private static void charSort(char[] charArray) {
+
+        int[] numChars = new int[256];
+
+        for (int i = 0; i < charArray.length; i++) {
+            numChars[charArray[i]]++;
+        }
+
+        int charArrayIndex = 0;
+        for (int i = 0; i < numChars.length; i++) {
+            while (numChars[i] > 0) {
+                charArray[charArrayIndex++] = (char) i;
+                numChars[i]--;
+            }
+        }
     }
 
     // if args[0] is '-', apply Burrows-Wheeler encoding
