@@ -3,8 +3,7 @@ public class MoveToFront {
     // apply move-to-front encoding, reading from standard input and writing to standard output
     public static void encode() {
 
-
-        char[] moveToFront = buildMoveToFront();
+        char[] moveToFrontEncode = buildMoveToFront();
 
         char nextLetter = '\u0000';
         int output;
@@ -13,21 +12,21 @@ public class MoveToFront {
 
         for (int i = 0; i < s.length(); i++) {
 
-            BinaryStdOut.write((byte)(updateMoveToFront(s.charAt(i), moveToFront)));
+            BinaryStdOut.write((byte)(updateMoveToFront(s.charAt(i), moveToFrontEncode)));
         }
     }
 
     // apply move-to-front decoding, reading from standard input and writing to standard output
     public static void decode() {
 
-        char[] moveToFront = buildMoveToFront();
+        char[] moveToFrontDecode = buildMoveToFront();
 
         String s = BinaryStdIn.readString();
 
         for (int i = 0; i < s.length(); i++) {
 
-            BinaryStdOut.write(moveToFront[s.charAt(i)]);
-            updateMoveToFront(moveToFront[s.charAt(i)], moveToFront);
+            BinaryStdOut.write(moveToFrontDecode[s.charAt(i)]);
+            updateMoveToFront(moveToFrontDecode[s.charAt(i)], moveToFrontDecode);
         }
 
     }
@@ -48,7 +47,7 @@ public class MoveToFront {
         int index = 0;
         char lastLetter = '\u0000';
 
-        while (moveToFront[index] != nextLetter) {
+        while (index < 256 & moveToFront[index] != nextLetter) {
             if (index != 0) {
                 lastLetter = swapWithLast(moveToFront, index, lastLetter);
             } else {

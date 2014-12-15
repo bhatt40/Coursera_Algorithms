@@ -33,14 +33,13 @@ public class BurrowsWheeler {
     public static void decode() {
 
         int first = BinaryStdIn.readInt();
-        String lastChars = BinaryStdIn.readString();
-        char[] firstChars = lastChars.toCharArray();
+        char[] lastChars = BinaryStdIn.readString().toCharArray();
+        char[] firstChars = Arrays.copyOf(lastChars, lastChars.length);
         charSort(firstChars);
 
         int[] next = new int[firstChars.length];
         boolean[] marked = new boolean[firstChars.length];
-        for (int i = 0; i < next.length; i++) {
-            next[i] = -1;
+        for (int i = 0; i < marked.length; i++) {
             marked[i] = false;
         }
 
@@ -50,26 +49,28 @@ public class BurrowsWheeler {
             marked[next[i]] = true;
         }
 
-        char[] decoded = new char[firstChars.length];
+//        char[] decoded = new char[firstChars.length];
 
         // Rebuild string using next[] array
         int nextIndex = first;
-        int decodedIndex = 0;
+        int counter = 0;
         do {
-            decoded[decodedIndex++] = firstChars[nextIndex];
+//            decoded[decodedIndex++] = firstChars[nextIndex];
+            BinaryStdOut.write(firstChars[nextIndex]);
             nextIndex = next[nextIndex];
-        } while (decodedIndex < firstChars.length);
+            counter++;
+        } while (counter < firstChars.length);
 
-        BinaryStdOut.write(String.valueOf(decoded));
+//        BinaryStdOut.write(String.valueOf(decoded));
 
         BinaryStdOut.flush();
         BinaryStdOut.close();
     }
 
-    private static int findNext(char letter, boolean[] marked, String lastChars) {
+    private static int findNext(char letter, boolean[] marked, char[] lastChars) {
 
-        for (int i = 0; i < lastChars.length(); i++) {
-            if (lastChars.charAt(i) == letter & marked[i] == false)
+        for (int i = 0; i < lastChars.length; i++) {
+            if (lastChars[i] == letter & marked[i] == false)
                 return i;
         }
 
